@@ -1,3 +1,4 @@
+#!/bin/python
 #####################################################
 #					Combinator.py					#
 #				Written by: Eran Zimmerman			#

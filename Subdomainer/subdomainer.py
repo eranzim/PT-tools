@@ -2,6 +2,7 @@
 import sys
 import socket
 import argparse
+import traceback
 
 DESCRIPTION = """\
 Subdomain enumeration tool - find subdomains for a given domain.
@@ -61,20 +62,31 @@ def main(args):
     if args.n is not None:
         options = options[:args.n]
 
+    if args.o is not None:
+        # Truncate output file
+        open(args.o, 'w').close()
+
     # Rate on my computer was about 10.06 subdomains/sec.
-    for option in options:
-        try:
-            socket.gethostbyname("{}.{}".format(option, args.domain))
-            if args.to_stdout:
-                print option
-            if args.o is not None:
-                with open(args.o, "a") as o:
-                    o.write(option + "\n")
-        except socket.gaierror:
-            pass
-        except Exception, e:
-            # e.g. if opening output file fails, don't stop the script, but do print the error (to stderr).
-            sys.stderr.write(str(e))
+    try:
+        for option in options:
+            try:
+                socket.gethostbyname("{}.{}".format(option, args.domain))
+                if args.to_stdout:
+                    print option
+                if args.o is not None:
+                    with open(args.o, "a") as o:
+                        o.write(option + "\n")
+            except socket.gaierror:
+                # Domain doesn't exist
+                pass
+            except Exception:
+                # e.g. if opening output file fails, don't stop the script, but do print the error (to stderr).
+                sys.stderr.write("\nError during subdomain {}: \n".format(option))
+                traceback.print_exc()
+    except KeyboardInterrupt:
+        # If we're interrupted in the middle, print where we stopped
+        sys.stderr.write("\nInterrupted during check of subdomain \"{}\"\n\n".format(option))
+        raise
 
 
 if __name__ == "__main__":

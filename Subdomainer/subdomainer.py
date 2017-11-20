@@ -4,7 +4,7 @@ import socket
 import argparse
 
 DESCRIPTION = """\
-Find subdomains for a given domain.
+Subdomain enumeration tool - find subdomains for a given domain.
 Sends DNS queries for each subdomain in a given input list, outputs it if it exists.
 The input file should contain optional subdomains (such as www), separated by newlines.
 
@@ -32,7 +32,7 @@ def positive_int(s):
 def parse_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=DESCRIPTION)
 
-    parser.add_argument('-i', '--input', required=True, help='Input file path', dest='i')
+    parser.add_argument('-i', '--input', required=True, help='Input file path', metavar="IN_FILE", dest='i')
     parser.add_argument('-d', '--domain', required=True, help='Domain to search, e.g. example.com', dest='domain')
 
     parser.add_argument('-s', '--start-line', type=positive_int, default=1,
@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument('-q', '--quiet', action='store_false', default=True,
                         help='Don\'t output to screen', dest='to_stdout')
 
-    parser.add_argument('-o', '--out', help='Output file path', dest='o')
+    parser.add_argument('-o', '--out', help='Output file path', metavar="OUT_FILE", dest='o')
 
     args = parser.parse_args()
 

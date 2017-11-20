@@ -6,7 +6,6 @@
 #              Last modified:29/11/2013             #
 #####################################################
 
-import sys
 import argparse
 import itertools
 

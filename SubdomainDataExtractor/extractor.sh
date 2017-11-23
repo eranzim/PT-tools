@@ -29,3 +29,6 @@ for subdomain in $(cat $1);do
 done
 
 rm -f "$dir_name/ips.tmp"
+
+# Find e-mail addresses by searching for one of the following: @, (at), [at] or similar
+egrep '@|\([[:space:]]*at[[:space:]]*\)|\[[[:space:]]*at[[:space:]]*\]' "$dir_name/*" > "$dir_name/emails.log"

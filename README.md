@@ -44,10 +44,15 @@ python ./subdomainer.py -i subdomains_nc.txt -d example.com -s 10001
 
 ## SubdomainDataExtractor
 Collects data about a given list of subdomains. Useful to run on the output of Subdomainer.
-### Usage example:
+### Usage examples:
 * Basic usage, scanning www.example.com and mail.example.com:
 ```bash
 echo "www
 mail" > subdomains
+./extractor.sh subdomains example.com
+```
+* Using SubdomainDataExtractor with Subdomainer:
+```bash
+python ./subdomainer.py -i subdomains_nc.txt -d example.com -n 10000 -o subdomains -q
 ./extractor.sh subdomains example.com
 ```

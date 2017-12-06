@@ -71,24 +71,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -97,11 +96,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -110,36 +112,42 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

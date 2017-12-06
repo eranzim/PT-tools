@@ -59,18 +59,6 @@ _tmain(
 	FARPROC pfnLoadLibrary = NULL;
 	PVOID pvRemoteAddress = NULL;
 	HANDLE hRemoteThread = NULL;
-	/*HANDLE threadHandle;
-	HMODULE dllHandle;
-	DWORD processID;
-	FARPROC loadLibraryAddress;
-	LPVOID baseAddress;
-
-	char args[] = "C:\\somedll.dll";
-
-	printf("Enter process ID: ");
-	std::cin >> processID;
-	
-	printf("PID=%d\n",processID);*/
 	
 	if ((ARG_INDEX_COUNT != iArgc) || (NULL == apszArgv))
 	{
@@ -167,13 +155,13 @@ _tmain(
 
 lblCleanup:
 	CLOSE_HANDLE(hRemoteThread);
-	//TODO: On success, this should be leaked..
-	if (NULL != pvRemoteAddress)
+	// Leak the memory on success, free only on failures
+	if ((NULL != pvRemoteAddress) && (SDI_STATUS_SUCCESS != eStatus))
 	{
 		(VOID)VirtualFreeEx(hProcess, pvRemoteAddress, 0, MEM_RELEASE);
 		pvRemoteAddress = NULL;
 	}
-	//TODO: Continue cleaning up
+	CLOSE_HANDLE(hProcess);
 
 	return (INT)eStatus;
 }

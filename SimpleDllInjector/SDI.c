@@ -5,7 +5,8 @@
 //TODO: Move to Common.h
 #define DECIMAL (10)
 #define LENGTHOF(arr) ((sizeof(arr))/(sizeof((arr)[0])))
-#define OUTPUT(pszFormat, ...) (VOID)_tprintf(_T(pszFormat), __VA_ARGS__)
+#define OUTPUT(szFormat, ...) (VOID)_tprintf(_T(szFormat "\n"), __VA_ARGS__)
+#define CLOSE_HANDLE(hHandle) {if (NULL != (hHandle)) {(VOID)CloseHandle(hHandle); (hHandle) = NULL;}}
 
 typedef enum _ARG_INDEX
 {
@@ -24,10 +25,25 @@ typedef enum _SDI_STATUS
 	SDI_STATUS_INVALID_ARGS,
 	SDI_STATUS_INVALID_PID,
 	SDI_STATUS_STRINGCCHCOPY_FAILED,
+	SDI_STATUS_OPENPROCESS_FAILED,
+	SDI_STATUS_GETMODULEHANDLE_FAILED,
+	SDI_STATUS_GETPROCADDRESS_FAILED,
+	SDI_STATUS_VIRTUALALLOCEX_FAILED,
+	SDI_STATUS_WRITEPROCESSMEMORY_FAILED,
+	SDI_STATUS_CREATEREMOTETHREAD_FAILED,
 	
 	// Must be last:
 	SDI_STATUS_COUNT
 } SDI_STATUS, *PSDI_STATUS;
+
+#define KERNEL32_MODULE_NAME (_T("Kernel32"))
+#ifdef _UNICODE
+#define LOADLIBRARY_NAME ("LoadLibraryW")
+#else
+#define LOADLIBRARY_NAME ("LoadLibraryA")
+#endif
+#define REMOTE_ALLOCATION_SIZE (MAX_PATH)
+
 
 INT
 _tmain(
@@ -39,6 +55,10 @@ _tmain(
 	DWORD dwPid = 0;
 	TCHAR szDllPath[MAX_PATH] = _T("");
 	HRESULT hrResult = E_FAIL;
+	HMODULE hKernel32 = NULL;
+	FARPROC pfnLoadLibrary = NULL;
+	PVOID pvRemoteAddress = NULL;
+	HANDLE hRemoteThread = NULL;
 	/*HANDLE threadHandle;
 	HMODULE dllHandle;
 	DWORD processID;
@@ -59,11 +79,11 @@ _tmain(
 		goto lblCleanup;
 	}
 	
-	dwPid = _tcstoul(apszArgv[SDI_STATUS_INVALID_PID], NULL, DECIMAL);
+	dwPid = _tcstoul(apszArgv[ARG_INDEX_PID], NULL, DECIMAL);
 	if ((0 == dwPid) || (ULONG_MAX == dwPid))
 	{
 		eStatus = SDI_STATUS_INVALID_PID;
-		OUTPUT("_tcstoul failed. dwPid=%lu, LE=%lu", dwPid, GetLastError());
+		OUTPUT("_tcstoul failed with %lu. pid='%s', LE=%lu", dwPid, apszArgv[ARG_INDEX_PID], GetLastError());
 		goto lblCleanup;
 	}
 	
@@ -71,95 +91,89 @@ _tmain(
 	if (FAILED(hrResult))
 	{
 		eStatus = SDI_STATUS_STRINGCCHCOPY_FAILED;
-		OUTPUT("StringCchCopy failed. hrResult=0x%08X", hrResult);
+		OUTPUT("StringCchCopy failed with 0x%08X", hrResult);
 		goto lblCleanup;
 	}
 
 	//TODO: Ask for less access
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-/*	if(hProcess == NULL)
+	if (NULL == hProcess)
 	{
-		printf("Error unable to open process. Error code: %d", GetLastError());
-		std::cin.get();
-
-		return 0;
+		eStatus = SDI_STATUS_OPENPROCESS_FAILED;
+		OUTPUT("OpenProcess failed. LE=%lu", GetLastError());
+		goto lblCleanup;
 	}
 
-	printf("Process handle %d is ready",processID);
-
-	dllHandle = GetModuleHandle(L"Kernel32");
-
-	if(dllHandle == NULL)
+	hKernel32 = GetModuleHandle(KERNEL32_MODULE_NAME);
+	if (NULL == hKernel32)
 	{
-		printf("Error unable to allocate kernel32 handle..Error code: %d. Press any key to exit...",GetLastError());
+		eStatus = SDI_STATUS_GETMODULEHANDLE_FAILED;
+		OUTPUT("GetModuleHandle failed. LE=%lu", GetLastError());
+		goto lblCleanup;
 	}
 
-	printf("kernel32 handle is ready\n");
-
-
-	loadLibraryAddress = GetProcAddress(dllHandle,"LoadLibraryA");
-
-	if(loadLibraryAddress == NULL)
+	pfnLoadLibrary = GetProcAddress(hKernel32, LOADLIBRARY_NAME);
+	if (NULL == pfnLoadLibrary)
 	{
-		printf("Cannot get LoadLibraryA() address. Error code: %d. Press any key to exit",GetLastError());
-		std::cin.get();
-
-		return 0;
+		eStatus = SDI_STATUS_GETPROCADDRESS_FAILED;
+		OUTPUT("GetProcAddress failed. LE=%lu", GetLastError());
+		goto lblCleanup;
 	}
 
-	printf("LoadLibrary() address is ready\n");
-
-	baseAddress = VirtualAllocEx(
+	//TODO: Better to start with write / rw, then after write change to read-execute?
+	//TODO: For size, is sizeof(szDllPath) enough? Should be.. Might even be enough to use its actual length * sizeof(TCHAR). Same goes for WriteProcessMemory.
+	pvRemoteAddress = VirtualAllocEx(
 		hProcess,
 		NULL,
-		256,
+		REMOTE_ALLOCATION_SIZE,
 		MEM_COMMIT|MEM_RESERVE,
-		PAGE_READWRITE);
-
-	if(baseAddress == NULL)
+		PAGE_EXECUTE_READWRITE);
+	if (NULL == pvRemoteAddress)
 	{
-		printf("Error unable to alocate memmory in remote process. Error code: %d. Press any key to exit", GetLastError());
-		std::cin.get();
-
-		return 0;
+		eStatus = SDI_STATUS_VIRTUALALLOCEX_FAILED;
+		OUTPUT("VirtualAllocEx failed. LE=%lu", GetLastError());
+		goto lblCleanup;
 	}
 
-	printf("Memory allocation succeeded\n");
-
-	BOOL isSucceeded = WriteProcessMemory(
+	if (!WriteProcessMemory(
 		hProcess,
-		baseAddress,
-		args,
-		sizeof(args)+1,
-		NULL);
-
-	if(isSucceeded == 0)
+		pvRemoteAddress,
+		szDllPath,
+		sizeof(szDllPath),
+		NULL))
 	{
-		printf("Error unable to write memory . Error code: %d Press any key to exit...",GetLastError());
-		std::cin.get();
-
-		return 0;
+		eStatus = SDI_STATUS_WRITEPROCESSMEMORY_FAILED;
+		OUTPUT("WriteProcessMemory failed. LE=%lu", GetLastError());
+		goto lblCleanup;
 	}
 
-	printf("Argument has been written\n");
-
-
-	threadHandle = CreateRemoteThread(
+	hRemoteThread = CreateRemoteThread(
 		hProcess,
 		NULL,
 		0,
-		(LPTHREAD_START_ROUTINE)loadLibraryAddress,
-		baseAddress,
-		NULL,
-		0);
-
-	if(threadHandle != NULL)
+		(PTHREAD_START_ROUTINE)pfnLoadLibrary,
+		pvRemoteAddress,
+		0,
+		NULL);
+	if (NULL == hRemoteThread)
 	{
-		printf("Remote thread has been created\n");
+		eStatus = SDI_STATUS_CREATEREMOTETHREAD_FAILED;
+		OUTPUT("CreateRemoteThread failed. LE=%lu", GetLastError());
+		goto lblCleanup;
 	}
 
-	std::cin.get();*/
+	// Great success!
+	eStatus = SDI_STATUS_SUCCESS;
 
 lblCleanup:
-	return 0;
+	CLOSE_HANDLE(hRemoteThread);
+	//TODO: On success, this should be leaked..
+	if (NULL != pvRemoteAddress)
+	{
+		(VOID)VirtualFreeEx(hProcess, pvRemoteAddress, 0, MEM_RELEASE);
+		pvRemoteAddress = NULL;
+	}
+	//TODO: Continue cleaning up
+
+	return (INT)eStatus;
 }

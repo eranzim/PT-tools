@@ -44,6 +44,12 @@ typedef enum _SDI_STATUS
 #endif
 #define REMOTE_ALLOCATION_SIZE (MAX_PATH)
 
+#define PERMISSIONS_VIRTUALALLOCEX (PROCESS_VM_OPERATION)
+#define PERMISSIONS_WRITEPROCESSMEMORY (PROCESS_VM_WRITE | PROCESS_VM_OPERATION)
+#define PERMISSIONS_CREATEREMOTETHREAD (PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ)
+// CreateRemoteThread's permission contain the other permissions, but it's still more correct this way and more easily verifiable
+#define REQUIRED_PERMISSIONS (PERMISSIONS_VIRTUALALLOCEX | PERMISSIONS_WRITEPROCESSMEMORY | PERMISSIONS_CREATEREMOTETHREAD)
+
 
 INT
 _tmain(
@@ -83,8 +89,7 @@ _tmain(
 		goto lblCleanup;
 	}
 
-	//TODO: Ask for less access
-	hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	hProcess = OpenProcess(REQUIRED_PERMISSIONS, FALSE, dwPid);
 	if (NULL == hProcess)
 	{
 		eStatus = SDI_STATUS_OPENPROCESS_FAILED;

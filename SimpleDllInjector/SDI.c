@@ -4,6 +4,8 @@
 
 //TODO: Move to Common.h
 #define DECIMAL (10)
+#define LENGTHOF(arr) ((sizeof(arr))/(sizeof((arr)[0])))
+#define OUTPUT(pszFormat, ...) (VOID)_tprintf(_T(pszFormat), __VA_ARGS__)
 
 typedef enum _ARG_INDEX
 {
@@ -53,6 +55,7 @@ _tmain(
 	if ((ARG_INDEX_COUNT != iArgc) || (NULL == apszArgv))
 	{
 		eStatus = SDI_STATUS_INVALID_ARGS;
+		OUTPUT("Bad args. iArgc=%d, apszArgv=0x%p", iArgc, apszArgv);
 		goto lblCleanup;
 	}
 	
@@ -60,13 +63,15 @@ _tmain(
 	if ((0 == dwPid) || (ULONG_MAX == dwPid))
 	{
 		eStatus = SDI_STATUS_INVALID_PID;
+		OUTPUT("_tcstoul failed. dwPid=%lu, LE=%lu", dwPid, GetLastError());
 		goto lblCleanup;
 	}
 	
-	hrResult = StringCchCopy(szDllPath, _lengthof(szDllPath), apszArgv[ARG_INDEX_DLL_PATH]);
+	hrResult = StringCchCopy(szDllPath, LENGTHOF(szDllPath), apszArgv[ARG_INDEX_DLL_PATH]);
 	if (FAILED(hrResult))
 	{
 		eStatus = SDI_STATUS_STRINGCCHCOPY_FAILED;
+		OUTPUT("StringCchCopy failed. hrResult=0x%08X", hrResult);
 		goto lblCleanup;
 	}
 

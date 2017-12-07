@@ -9,7 +9,8 @@ Subdomain enumeration tool - find subdomains for a given domain.
 Sends DNS queries for each subdomain in a given input list, outputs it if it exists.
 The input file should contain optional subdomains (such as www), separated by newlines.
 
-Note: For large input files, it is recommended to sort them from most to least probable (if possible), not alphabetically.
+Note: For large input files, it is recommended to sort them from most to least probable (if possible),
+        not alphabetically.
 """
 
 
@@ -66,6 +67,9 @@ def main(args):
         # Truncate output file
         open(args.o, 'w').close()
 
+    # Initialize to avoid warning: Unbound local variable - Local variable 'option' might be referenced before
+    # assignment (in except block)
+    option = None
     # Rate on my computer was about 10.06 subdomains/sec.
     try:
         for option in options:

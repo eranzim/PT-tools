@@ -16,7 +16,8 @@ Useful for generating passwords.
 
 Example:
     If the input contains the words "john" and "doe",
-    Combinator will by default create the following words, and more: johndoe, JohnDoe, JOHNDOE, john_doe, John_Doe, JOHN_DOE, JohnDOE, doeJohn, doe_JOHN,...
+    Combinator will by default create the following words, and more: johndoe, JohnDoe, JOHNDOE, john_doe, John_Doe,
+                                                                        JOHN_DOE, JohnDOE, doeJohn, doe_JOHN,...
 
 
 If none of -l, -U, -C will be specified, all will be used.
@@ -55,17 +56,24 @@ def unsigned(s):
 def parse_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=DESCRIPTION)
 
-    parser.add_argument('-i', '--input', dest='i', metavar='infile', required=True, type=argparse.FileType('r'), help='Input file path')
+    parser.add_argument('-i', '--input', dest='i', metavar='infile', required=True, type=argparse.FileType('r'),
+                        help='Input file path')
 
-    parser.add_argument('-l', '--lowercase', dest='l', action='store_true', default=False, help='Use lowercase version of the words')
-    parser.add_argument('-U', '--UPPERCASE', dest='U', action='store_true', default=False, help='Use UPPERCASE version of the words')
-    parser.add_argument('-C', '--CamelCase', dest='C', action='store_true', default=False, help='Use CamelCase version of the words')
+    parser.add_argument('-l', '--lowercase', dest='l', action='store_true', default=False,
+                        help='Use lowercase version of the words')
+    parser.add_argument('-U', '--UPPERCASE', dest='U', action='store_true', default=False,
+                        help='Use UPPERCASE version of the words')
+    parser.add_argument('-C', '--CamelCase', dest='C', action='store_true', default=False,
+                        help='Use CamelCase version of the words')
 
-    parser.add_argument('-u', '--use_underscores', dest='u', action='store_true', help='Use underscores to connect words')
+    parser.add_argument('-u', '--use_underscores', dest='u', action='store_true',
+                        help='Use underscores to connect words')
     parser.add_argument('-c', '--concat', dest='c', action='store_true', help='Concatenate words without underscores')
 
-    parser.add_argument('-min', '--min_length', dest='min', metavar='len', default=2, type=unsigned, help='Min words to concatenate together to a single result (defaults to 2)')
-    parser.add_argument('-max', '--max_length', dest='max', metavar='len', default=2, type=unsigned, help='Max words to concatenate together to a single result (defaults to 2)')
+    parser.add_argument('-min', '--min_length', dest='min', metavar='len', default=2, type=unsigned,
+                        help='Min words to concatenate together to a single result (defaults to 2)')
+    parser.add_argument('-max', '--max_length', dest='max', metavar='len', default=2, type=unsigned,
+                        help='Max words to concatenate together to a single result (defaults to 2)')
 
     args = parser.parse_args()
 
@@ -79,7 +87,9 @@ def exhaust_args(args):
     if 0 == len(base_words_init):
         raise argparse.ArgumentTypeError("input file '%s' is empty!" % args.i.name)
     if len(base_words_init) < args.min:
-        raise argparse.ArgumentTypeError("input file '%s' doesn't have enough words - has %d words, but minimum words in each single result is %d" % (args.i.name, len(base_words_init), args.min, ))
+        raise argparse.ArgumentTypeError(
+            "input file '%s' doesn't have enough words - has %d words, but minimum words in each single result is %d"
+            % (args.i.name, len(base_words_init), args.min, ))
     args.max = min(args.max, len(base_words_init))
     
     base_words_list_of_lists = [[] for _ in range(len(base_words_init))]
@@ -118,7 +128,8 @@ def intersperse(iterable, delimiter):
 def generate_combinations(base_words, separators, args):
     # Foreach required length
     for length in range(args.min, args.max+1):
-        # itertools.permutations([[1,2], [3,4], [5,6]], 2) --> ([1, 2], [3, 4]) ([1, 2], [5, 6]) ([3, 4], [1, 2]) ([3, 4], [5, 6]) ([5, 6], [1, 2]) ([5, 6], [3, 4])
+        # itertools.permutations([[1,2], [3,4], [5,6]], 2) -->
+        # ([1, 2], [3, 4]) ([1, 2], [5, 6]) ([3, 4], [1, 2]) ([3, 4], [5, 6]) ([5, 6], [1, 2]) ([5, 6], [3, 4])
         # Warning: permutations is only iterable once
         permutations = itertools.permutations(base_words, length)
         # Foreach ordered selection of word lists ("johns" and "does")
@@ -139,6 +150,7 @@ def main():
     generate_combinations(base_words, separators, args)
 
     return 0
+
 
 if "__main__" == __name__:
     main()

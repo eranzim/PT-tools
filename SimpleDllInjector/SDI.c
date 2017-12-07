@@ -1,12 +1,14 @@
+/*
+Simple DLL Injector
+Injects a given DLL to a target process, calling its DllMain entry point
+Params: <Target PID> <DLL Path>
+*/
 #include <Windows.h>
 #include <tchar.h>
 #include <strsafe.h>
 
-//TODO: Move to Common.h
-#define DECIMAL (10)
-#define LENGTHOF(arr) ((sizeof(arr))/(sizeof((arr)[0])))
-#define OUTPUT(szFormat, ...) (VOID)_tprintf(_T(szFormat "\n"), __VA_ARGS__)
-#define CLOSE_HANDLE(hHandle) {if (NULL != (hHandle)) {(VOID)CloseHandle(hHandle); (hHandle) = NULL;}}
+#include "..\Common\Common.h"
+
 
 typedef enum _ARG_INDEX
 {
@@ -42,7 +44,6 @@ typedef enum _SDI_STATUS
 #else
 #define LOADLIBRARY_NAME ("LoadLibraryA")
 #endif
-#define REMOTE_ALLOCATION_SIZE (MAX_PATH)
 
 #define PERMISSIONS_VIRTUALALLOCEX (PROCESS_VM_OPERATION)
 #define PERMISSIONS_WRITEPROCESSMEMORY (PROCESS_VM_WRITE | PROCESS_VM_OPERATION)
@@ -60,6 +61,7 @@ _tmain(
 	HANDLE hProcess = NULL;
 	DWORD dwPid = 0;
 	TCHAR szDllPath[MAX_PATH] = _T("");
+	SIZE_T cbDllPath = 0;
 	HRESULT hrResult = E_FAIL;
 	HMODULE hKernel32 = NULL;
 	FARPROC pfnLoadLibrary = NULL;
@@ -73,7 +75,7 @@ _tmain(
 		goto lblCleanup;
 	}
 	
-	dwPid = _tcstoul(apszArgv[ARG_INDEX_PID], NULL, DECIMAL);
+	dwPid = _tcstoul(apszArgv[ARG_INDEX_PID], NULL, BASE_DECIMAL);
 	if ((0 == dwPid) || (ULONG_MAX == dwPid))
 	{
 		eStatus = SDI_STATUS_INVALID_PID;
@@ -88,6 +90,10 @@ _tmain(
 		OUTPUT("StringCchCopy failed with 0x%08X", hrResult);
 		goto lblCleanup;
 	}
+
+	// _tcsnlen will return at most LENGTHOF(szDllPath)-1, but probably less.
+	// Add 1 for terminating-null
+	cbDllPath = (_tcsnlen(szDllPath, LENGTHOF(szDllPath)-1) + 1) * sizeof(TCHAR);
 
 	hProcess = OpenProcess(REQUIRED_PERMISSIONS, FALSE, dwPid);
 	if (NULL == hProcess)
@@ -113,14 +119,12 @@ _tmain(
 		goto lblCleanup;
 	}
 
-	//TODO: Better to start with write / rw, then after write change to read-execute?
-	//TODO: For size, is sizeof(szDllPath) enough? Should be.. Might even be enough to use its actual length * sizeof(TCHAR). Same goes for WriteProcessMemory.
 	pvRemoteAddress = VirtualAllocEx(
 		hProcess,
 		NULL,
-		REMOTE_ALLOCATION_SIZE,
+		cbDllPath,
 		MEM_COMMIT|MEM_RESERVE,
-		PAGE_EXECUTE_READWRITE);
+		PAGE_READWRITE);
 	if (NULL == pvRemoteAddress)
 	{
 		eStatus = SDI_STATUS_VIRTUALALLOCEX_FAILED;
@@ -132,7 +136,7 @@ _tmain(
 		hProcess,
 		pvRemoteAddress,
 		szDllPath,
-		sizeof(szDllPath),
+		cbDllPath,
 		NULL))
 	{
 		eStatus = SDI_STATUS_WRITEPROCESSMEMORY_FAILED;

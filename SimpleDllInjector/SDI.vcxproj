@@ -150,6 +150,9 @@
   <ItemGroup>
     <ClCompile Include="SDI.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\Common.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -4,10 +4,18 @@
     <Filter Include="SDI">
       <UniqueIdentifier>{7387f256-f62a-44ac-9f47-e8b0b3ba4f9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{2da618d3-c39f-4a3e-b51e-7ed8855b9448}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SDI.c">
       <Filter>SDI</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\Common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

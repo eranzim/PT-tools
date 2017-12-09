@@ -20,6 +20,13 @@ python ./combinator.py -i names -min 1 -max 3
 python ./combinator.py -i names -l -c
 ```
 
+## SimpleDllInjector
+Injects a DLL of our choice to a process of our choice, calling its DllMain function in the victim process.
+### Usage:
+```cmd
+SDI.exe <Target PID> <DLL Path>
+```
+
 ## Subdomainer
 Finds subdomains of a given website. Works well with https://github.com/averagesecurityguy/axfr/blob/master/subdomains_nc.txt (entire runtime is likely to take a while, but it will find most results quickly, and the script allows for stopping and picking up from a previous spot)
 ### Usage examples:

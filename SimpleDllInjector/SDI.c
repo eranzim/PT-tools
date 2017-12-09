@@ -71,7 +71,14 @@ _tmain(
 	if ((ARG_INDEX_COUNT != iArgc) || (NULL == apszArgv))
 	{
 		eStatus = SDI_STATUS_INVALID_ARGS;
-		OUTPUT("Bad args. iArgc=%d, apszArgv=0x%p", iArgc, apszArgv);
+		if (1 == iArgc)
+		{
+			OUTPUT("Usage: SDI.exe <Target PID> <DLL Path>");
+		}
+		else
+		{
+			OUTPUT("Bad args. iArgc=%d, apszArgv=0x%p", iArgc, apszArgv);
+		}
 		goto lblCleanup;
 	}
 	

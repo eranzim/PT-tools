@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ "$#" -ne 1 ]; then
     echo "Usage: ./simple_run.sh <domain>"
     exit 1

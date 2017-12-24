@@ -25,7 +25,7 @@ def print_comments(all_comments):
     if not all_comments:
         print "\nNo comments found... :("
         return
-    
+
     # Strip, remove duplicates and sort
     all_comments = [comment.strip() for comment in all_comments]
     all_comments = list(set(all_comments))

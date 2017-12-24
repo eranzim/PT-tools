@@ -20,6 +20,18 @@ python ./combinator.py -i names -min 1 -max 3
 python ./combinator.py -i names -l -c
 ```
 
+## FindComments
+Finds comments inside web pages. These can sometimes contain useful information.
+### Usage examples:
+* Recursively scanning a directory containing a website:
+```bash
+python ./find_comments.py "/local/path/to/website/dir"
+```
+* Scanning a single file:
+```bash
+python ./find_comments.py "/local/path/to/some/index.html"
+```
+
 ## SimpleDllInjector
 Injects a DLL of our choice to a process of our choice, calling its DllMain function in the victim process.
 ### Usage:
@@ -62,8 +74,7 @@ echo "www
 mail" > subdomains
 ./extractor.sh subdomains example.com
 ```
-* Using SubdomainDataExtractor with Subdomainer:
+* Using the one-click, no-questions-asked script, including running Subdomainer:
 ```bash
-python ./subdomainer.py -i subdomains_nc.txt -d example.com -n 10000 -o subdomains -q
-./extractor.sh subdomains example.com
+./simple_run.sh example.com
 ```

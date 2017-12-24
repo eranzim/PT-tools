@@ -36,6 +36,7 @@ for subdomain in $(cat $1);do
 done
 
 rm -f "$dir_name/ips.tmp"
+find ./wget-log* -size 0 -type f -delete 2>/dev/null
 
 # Find e-mail addresses by searching for one of the following: @, (at), [at] or similar
 egrep -r --exclude=emails-grep.log '@|\([[:space:]]*at[[:space:]]*\)|\[[[:space:]]*at[[:space:]]*\]' "$dir_name" > "$dir_name/emails-grep.log"

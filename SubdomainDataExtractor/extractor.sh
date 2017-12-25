@@ -36,7 +36,7 @@ for subdomain in $(cat $1);do
     wait
 done
 
-sort -u $dir_name/html_comments_u.log > $dir_name/html_comments_u.log
+sort -u $dir_name/html_comments_u.log -o $dir_name/html_comments_u.log
 
 rm -f "$dir_name/ips.tmp"
 find ./wget-log* -size 0 -type f -delete 2>/dev/null

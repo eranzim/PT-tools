@@ -31,6 +31,10 @@ python ./find_comments.py "/local/path/to/website/dir"
 ```bash
 python ./find_comments.py "/local/path/to/some/index.html"
 ```
+* No errors and no titles etc. in output:
+```bash
+python ./find_comments.py -e -s "/local/path/to/page_or_dir"
+```
 
 ## SimpleDllInjector
 Injects a DLL of our choice to a process of our choice, calling its DllMain function in the victim process.

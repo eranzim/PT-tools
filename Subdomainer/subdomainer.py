@@ -3,6 +3,7 @@ import sys
 import socket
 import argparse
 import traceback
+import urllib
 
 DESCRIPTION = """\
 Subdomain enumeration tool - find subdomains for a given domain.
@@ -92,6 +93,14 @@ def main(args):
         sys.stderr.write("\nInterrupted during check of subdomain \"{}\"\n\n".format(option))
         raise
 
+    # If files in array exists, do a download, else print a message them dosen't exist
+    files = ["robots.txt","crossdomain.xml"]
+    for file in range(len(files)):
+        http_code = urllib.urlopen("http://" + args.domain + "/" + files[file]).getcode()
+        if http_code == 200:
+            urllib.urlretrieve("http://" + args.domain + "/" + files[file], files[file])
+        else:
+            print "There isn't" + files[file] + "for this domain"
 
 if __name__ == "__main__":
     parsed_args = parse_args()

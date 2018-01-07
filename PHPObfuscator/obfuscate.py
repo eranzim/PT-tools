@@ -1,14 +1,15 @@
 import sys
 import re
 
-# TODO: deal with classes ($this, $member ... $this->member)
-# TODO: Remove comments
+# TODO: deal with classes ($member ... $this->member)
+# TODO: Remove unnecessary spaces? e.g. $x = 3; --> $x=3;, 1 + 2 --> 1+2, expr;\nexpr; --> expr;expr;... Careful! don't replace inside strings!
 # TODO: encode strings?
 
 PHP_EXT = ".php"
 VARIABLE_REGEX = re.compile(r'(?:^\$(?P<variable1>\w+))|(?:\s+\$(?P<variable2>\w+))|(?:;\$(?P<variable3>\w+))')
 PREDEFINED_VARS = {"GLOBALS", "_SERVER", "_GET", "_POST", "_FILES", "_REQUEST", "_SESSION", "_ENV", "_COOKIE",
                    "php_errormsg", "HTTP_RAW_POST_DATA", "http_response_header", "argc", "argv", "this"}
+COMMENT_REGEXES = (re.compile(r"/\*.*?\*/", re.DOTALL), re.compile(r"//.*"), re.compile(r"#.*"))
 
 
 def get_all_variables(php):
@@ -29,9 +30,16 @@ def rename_vars(php, variables):
     return php
 
 
+def remove_comments(php):
+    for regex in COMMENT_REGEXES:
+        php = re.sub(regex, "", php)
+    return php
+
+
 def obfuscate(php):
     variables = get_all_variables(php)
     php = rename_vars(php, variables)
+    php = remove_comments(php)
     return php
 
 

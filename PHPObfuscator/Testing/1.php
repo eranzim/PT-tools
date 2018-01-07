@@ -18,11 +18,12 @@ $numnoquotes3dig = 123;
  $somethingdiff=123;
 
 $somethingdata="adlskfjal&(&0";
-$somedataovertherainbow='%324524*$)%@*'
+$somedataovertherainbow='%324524*$)%@*' /*sdfs*/ asdf
 $somethingnotcool=$*)*$)@*;
-$brand_id=1;
-$_brand_id=1;$messitup=3;
+$brand_id=1; // asdf
+$_brand_id=1;$messitup=3; # ddddd
 global whatthe;$d_id=1;
 
 $asdf=$asdf;
 $asdf=$_GET;
+$as/*diff*/df = 3;

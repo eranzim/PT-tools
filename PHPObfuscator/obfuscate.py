@@ -2,11 +2,14 @@ import sys
 import re
 
 # TODO: change var names
+# TODO: deal with classes ($this, $member ... $this->member)
+# TODO: Remove comments
+# TODO: bug: var name contained in another var name
 
 PHP_EXT = ".php"
 VARIABLE_REGEX = re.compile(r'(?:^\$(?P<variable1>\w+))|(?:\s+\$(?P<variable2>\w+))|(?:;\$(?P<variable3>\w+))')
 PREDEFINED_VARS = {"GLOBALS", "_SERVER", "_GET", "_POST", "_FILES", "_REQUEST", "_SESSION", "_ENV", "_COOKIE",
-                   "php_errormsg", "HTTP_RAW_POST_DATA", "http_response_header", "argc", "argv"}
+                   "php_errormsg", "HTTP_RAW_POST_DATA", "http_response_header", "argc", "argv", "this"}
 
 
 def get_all_variables(php):
@@ -21,10 +24,15 @@ def get_all_variables(php):
     return all_vars.difference(PREDEFINED_VARS)
 
 
+def rename_vars(php, variables):
+    for i, var in enumerate(variables):
+        php = php.replace("$" + var, "$" + str(i))
+    return php
+
+
 def obfuscate(php):
-    vars = get_all_variables(php)
-    print vars
-    print len(vars)
+    variables = get_all_variables(php)
+    php = rename_vars(php, variables)
     return php
 
 

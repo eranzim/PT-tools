@@ -1,10 +1,9 @@
 import sys
 import re
 
-# TODO: change var names
 # TODO: deal with classes ($this, $member ... $this->member)
 # TODO: Remove comments
-# TODO: bug: var name contained in another var name
+# TODO: encode strings?
 
 PHP_EXT = ".php"
 VARIABLE_REGEX = re.compile(r'(?:^\$(?P<variable1>\w+))|(?:\s+\$(?P<variable2>\w+))|(?:;\$(?P<variable3>\w+))')
@@ -26,7 +25,7 @@ def get_all_variables(php):
 
 def rename_vars(php, variables):
     for i, var in enumerate(variables):
-        php = php.replace("$" + var, "$" + str(i))
+        php = re.sub(r"\$\b{}\b".format(re.escape(var)), "$" + str(i), php)
     return php
 
 

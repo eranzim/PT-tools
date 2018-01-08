@@ -36,14 +36,12 @@ for subdomain in $(cat $1);do
     wait
 done
 
-# If files in array exists, do a download, else print a message them dosen't exist
+# If files in array exists, do a download
 files=("robots.txt" "crossdomain.xml")
 for file in ${files[@]};do
     curl -I -s $2/$file | grep "200 OK"
     if [[ $? == 0 ]];then
-        timeout 20 wget -P "$dir_name/websites" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" $2/$file
-    else
-        echo "There isn't" $file "for" $2
+        timeout 20 wget -P "$dir_name/websites" -q --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" $2/$file
     fi
 done
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Param #1: input file
-# param #2: domain
+# Param #2: domain
 
 dir_name="$2_$(date +%Y%m%d_%H%M%S)"
 
@@ -34,6 +34,17 @@ for subdomain in $(cat $1);do
         to_file $ip "host -a $ip" rdns-a.log &
     done
     wait
+done
+
+# If files in array exists, do a download, else print a message them dosen't exist
+files=("robots.txt" "crossdomain.xml")
+for file in ${files[@]};do
+    curl -I -s $2/$file | grep "200 OK"
+    if [[ $? == 0 ]];then
+        timeout 20 wget -P "$dir_name/websites" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" $2/$file
+    else
+        echo "There isn't" $file "for" $2
+    fi
 done
 
 sort -u $dir_name/html_comments_u.log -o $dir_name/html_comments_u.log

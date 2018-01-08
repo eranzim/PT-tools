@@ -25,6 +25,19 @@ for subdomain in $(cat $1);do
     to_file $subdomain "dig $subdomain.$2 +short" dig-short.log &
     to_file $subdomain "whois -H $subdomain.$2" whois.log &
     to_file $subdomain "ping -c 2 $subdomain.$2" ping.log &
+    # If files in array exists, do a download
+    files=("robots.txt" "crossdomain.xml")
+    for file in ${files[@]};do
+    wget -q --spider http://$subdomain.$2/$file
+    if [[ $? == 0 ]];then
+        timeout 20 wget -P "$dir_name/websites/$subdomain/80" -q --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2/$file
+    fi
+    wget -q --spider https://$subdomain.$2/$file
+    if [[ $? == 0 ]];then
+        timeout 20 wget -P "$dir_name/websites/$subdomain/443" -q --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" https://$subdomain.$2/$file
+    fi
+    done
+    wait
     # This line must run synchronously, since following lines depend on it!
     dig $subdomain.$2 +short > "$dir_name/ips.tmp"
     for ip in $(cat "$dir_name/ips.tmp");do
@@ -34,15 +47,6 @@ for subdomain in $(cat $1);do
         to_file $ip "host -a $ip" rdns-a.log &
     done
     wait
-done
-
-# If files in array exists, do a download
-files=("robots.txt" "crossdomain.xml")
-for file in ${files[@]};do
-    curl -I -s $2/$file | grep "200 OK"
-    if [[ $? == 0 ]];then
-        timeout 20 wget -P "$dir_name/websites" -q --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" $2/$file
-    fi
 done
 
 sort -u $dir_name/html_comments_u.log -o $dir_name/html_comments_u.log

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Param #1: input file
-# param #2: domain
+# Param #2: domain
 
 dir_name="$2_$(date +%Y%m%d_%H%M%S)"
 
@@ -17,8 +17,15 @@ truncate -s 0 $dir_name/html_comments_u.log
 for subdomain in $(cat $1);do
     mkdir -v "$dir_name/websites/$subdomain"
     # Create a directory, download the website into it, then scan it for comments
-    mkdir -v "$dir_name/websites/$subdomain/80" && timeout 20 wget -P "$dir_name/websites/$subdomain/80" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2 && to_file $subdomain "python ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/80" html_comments.log && python ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/80 >> $dir_name/html_comments_u.log &
-    mkdir -v "$dir_name/websites/$subdomain/443" && timeout 20 wget -P "$dir_name/websites/$subdomain/443" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" https://$subdomain.$2 && to_file $subdomain "python ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/443" html_comments.log && python ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/443 >> $dir_name/html_comments_u.log &
+    protocols=("80" "443")
+    files=("robots.txt" "crossdomain.xml")
+    for protocol in ${protocols[@]};do
+        mkdir -v "$dir_name/websites/$subdomain/$protocol"
+        timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2 && to_file $subdomain "python ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/$protocol" html_comments.log && python ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/$protocol >> $dir_name/html_comments_u.log &             
+        for file in ${files[@]};do
+            timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2/$file &
+        done
+    done
     to_file $subdomain "host $subdomain.$2" host.log &
     to_file $subdomain "host -a $subdomain.$2" host-a.log &
     to_file $subdomain "dig $subdomain.$2 any +all" dig.log &

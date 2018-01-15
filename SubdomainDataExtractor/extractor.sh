@@ -21,9 +21,9 @@ for subdomain in $(cat $1);do
     files=("robots.txt" "crossdomain.xml")
     for protocol in ${protocols[@]};do
         mkdir -v "$dir_name/websites/$subdomain/$protocol"
-        timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2 && to_file $subdomain "python ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/$protocol" html_comments.log && python ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/$protocol >> $dir_name/html_comments_u.log &             
+        timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -e robots=off -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2 && to_file $subdomain "python ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/$protocol" html_comments.log && python ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/$protocol >> $dir_name/html_comments_u.log &             
         for file in ${files[@]};do
-            timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2/$file &
+            timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -e robots=off -r --no-host-directories --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36" http://$subdomain.$2/$file &
         done
     done
     to_file $subdomain "host $subdomain.$2" host.log &

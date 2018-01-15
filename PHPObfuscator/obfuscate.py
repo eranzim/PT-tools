@@ -3,7 +3,7 @@ import re
 
 # TODO: deal with classes ($member ... $this->member)
 # TODO: Remove unnecessary spaces? e.g. $x = 3; --> $x=3;, 1 + 2 --> 1+2, expr;\nexpr; --> expr;expr;... Careful! don't replace inside strings!
-# TODO: encode strings?
+# TODO: encode strings? array + chr or other ways..
 
 PHP_EXT = ".php"
 VARIABLE_REGEX = re.compile(r'(?:^\$(?P<variable1>\w+))|(?:\s+\$(?P<variable2>\w+))|(?:;\$(?P<variable3>\w+))')

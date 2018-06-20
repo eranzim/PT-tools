@@ -4,7 +4,8 @@
 
 dir_name="$2_$(date +%Y%m%d_%H%M%S)"
 user_agent_string="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"
-email_regex='([a-zA-Z0-9_.+-]+([[:space:]]*@[[:space:]]*|[[:space:]]*\([[:space:]]*[aA][tT][[:space:]]*\)[[:space:]]*|[[:space:]]*\[[[:space:]]*[aA][tT][[:space:]]*\][[:space:]]*|[[:space:]]+[aA][tT][[:space:]]+)[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-])+)'
+# This isn't the "full" e-mail regex, but a relatively simplified, usually-good-enough one. See here: https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression
+email_regex='([a-zA-Z0-9_.+-]+([[:space:]]*@[[:space:]]*|[[:space:]]*\([[:space:]]*[aA][tT][[:space:]]*\)[[:space:]]*|[[:space:]]*\[[[:space:]]*[aA][tT][[:space:]]*\][[:space:]]*|[[:space:]]+[aA][tT][[:space:]]+)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)'
 
 function to_file {
     (echo $1

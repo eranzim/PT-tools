@@ -33,7 +33,8 @@ for subdomain in $(cat $1);do
     done
     to_file $subdomain "host $subdomain.$2" host.log &
     to_file $subdomain "host -a $subdomain.$2" host-a.log &
-    to_file $subdomain "dig $subdomain.$2 any +all" dig.log &
+    to_file $subdomain "dig $subdomain.$2 +all" dig.log &
+    to_file $subdomain "dig $subdomain.$2 any +all" dig-any.log &
     to_file $subdomain "dig $subdomain.$2 +short" dig-short.log &
     to_file $subdomain "whois -H $subdomain.$2" whois.log &
     to_file $subdomain "ping -c 2 $subdomain.$2" ping.log &

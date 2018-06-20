@@ -15,6 +15,8 @@ function to_file {
 mkdir -v "$dir_name"
 mkdir -v "$dir_name/websites"
 truncate -s 0 $dir_name/html-comments-u.log
+# Using & (run in background), output got mixed with the next write to the file, so doing it synchronously
+to_file $2 "whois -H $2" whois.log
 
 for subdomain in $(cat $1);do
     mkdir -v "$dir_name/websites/$subdomain"

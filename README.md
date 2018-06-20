@@ -82,3 +82,10 @@ mail" > subdomains
 ```bash
 ./simple_run.sh example.com
 ```
+
+## PHPObfuscator
+Very simple obfuscator for php. I mainly wrote it for the sport, but it's not nearly as good as some of the other ones out there, like fopo.com.ar
+### Usage:
+```bash
+python obfuscate.py my.php
+```

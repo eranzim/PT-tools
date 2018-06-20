@@ -4,7 +4,7 @@
 
 dir_name="$2_$(date +%Y%m%d_%H%M%S)"
 user_agent_string="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"
-email_regex='([a-zA-Z0-9_.+-]+(@|[[:space:]]*\([[:space:]]*at[[:space:]]*\)[[:space:]]*|[[:space:]]*\[[[:space:]]*at[[:space:]]*\][[:space:]]*)[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]+)'
+email_regex='([a-zA-Z0-9_.+-]+([[:space:]]*@[[:space:]]*|[[:space:]]*\([[:space:]]*[aA][tT][[:space:]]*\)[[:space:]]*|[[:space:]]*\[[[:space:]]*[aA][tT][[:space:]]*\][[:space:]]*|[[:space:]]+[aA][tT][[:space:]]+)[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-])+)'
 
 function to_file {
     (echo $1
@@ -50,6 +50,6 @@ sort -u $dir_name/html-comments-u.log -o $dir_name/html-comments-u.log
 rm -f "$dir_name/ips.tmp"
 find ./wget-log* -size 0 -type f -delete 2>/dev/null
 
-# Find e-mail addresses by searching for e-mails containing one of the following: @, (at), [at]
+# Find e-mail addresses by searching for e-mails containing one of the following: @, (at), [at], at
 egrep -r --exclude=emails-grep.log "$email_regex" "$dir_name" | sort -u > "$dir_name/emails-grep.log"
 egrep -o "$email_regex" "$dir_name/emails-grep.log" | sort -u > "$dir_name/emails-grep-u.log"

@@ -57,3 +57,4 @@ find ./wget-log* -size 0 -type f -delete 2>/dev/null
 # Find e-mail addresses by searching for e-mails containing one of the following: @, (at), [at], at
 egrep -r --exclude=emails-grep.log "$email_regex" "$dir_name" | sort -u > "$dir_name/emails-grep.log"
 egrep -o "$email_regex" "$dir_name/emails-grep.log" | sort -u > "$dir_name/emails-grep-u.log"
+grep $2 "$dir_name/emails-grep-u.log" > "$dir_name/emails-domain.log"

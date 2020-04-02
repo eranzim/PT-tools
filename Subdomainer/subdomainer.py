@@ -19,7 +19,7 @@ def args_post_processing(args):
     args.s -= 1
 
     if not args.to_stdout and args.o is None:
-        print "WARNING: no output is generated from this script (-q specified without -o)"
+        print("WARNING: no output is generated from this script (-q specified without -o)")
 
     return args
 
@@ -76,7 +76,7 @@ def main(args):
             try:
                 socket.gethostbyname("{}.{}".format(option, args.domain))
                 if args.to_stdout:
-                    print option
+                    print(option)
                 if args.o is not None:
                     with open(args.o, "a") as o:
                         o.write(option + "\n")

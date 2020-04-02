@@ -28,18 +28,17 @@ def print_comments(all_comments, simple_output):
     # If we haven't found anything:
     if not all_comments:
         if not simple_output:
-            print "\nNo comments found... :("
+            print("\nNo comments found... :(")
         return
 
     # Strip, remove duplicates and sort
     all_comments = [comment.strip() for comment in all_comments]
-    all_comments = list(set(all_comments))
-    all_comments.sort()
+    all_comments = sorted(set(all_comments))
     if not simple_output:
-        print "\nComments:"
-        print "---------\n"
+        print("\nComments:")
+        print("---------\n")
     for comment in all_comments:
-        print comment
+        print(comment)
 
 
 def parse_args():

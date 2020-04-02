@@ -38,7 +38,7 @@ def args_post_processing(args):
         raise argparse.ArgumentTypeError("min argument (%d) is bigger than max argument (%d)" % (args.min, args.max, ))
     
     if 0 == args.min:
-        print  # Empty string
+        print()  # Empty string
         args.min = 1
     if 0 == args.max:
         exit(0)  # Nothing more to do here
@@ -83,7 +83,7 @@ def parse_args():
 
 
 def exhaust_args(args):
-    base_words_init = list(set([s.strip().lower() for s in args.i.readlines() if 0 < len(s.strip())]))
+    base_words_init = list({s.strip().lower() for s in args.i.readlines() if 0 < len(s.strip())})
     if 0 == len(base_words_init):
         raise argparse.ArgumentTypeError("input file '%s' is empty!" % args.i.name)
     if len(base_words_init) < args.min:
@@ -139,7 +139,7 @@ def generate_combinations(base_words, separators, args):
             # Finally, foreach result, print it to the output file
             for res in prod:
                 # Each res is a tuple of words and separators, so we need to join it
-                print ''.join(res)
+                print(''.join(res))
 
 
 def main():

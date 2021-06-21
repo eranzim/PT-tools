@@ -55,7 +55,7 @@ def parse_args():
 
 
 def main(args):
-    with open(args.i, "rb") as f:
+    with open(args.i, "r") as f:
         options = f.read().splitlines()
 
     if args.s > 0:

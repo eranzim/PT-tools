@@ -26,7 +26,7 @@ for subdomain in $(cat $1);do
     files=("robots.txt" "crossdomain.xml")
     for protocol in ${protocols[@]};do
         mkdir -v "$dir_name/websites/$subdomain/$protocol"
-        timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -e robots=off -r --no-host-directories --user-agent="$user_agent_string" http://$subdomain.$2 && to_file $subdomain "python ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/$protocol" html-comments.log && python ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/$protocol >> $dir_name/html-comments-u.log &
+        timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -e robots=off -r --no-host-directories --user-agent="$user_agent_string" http://$subdomain.$2 && to_file $subdomain "python3 ../FindComments/find_comments.py -s $dir_name/websites/$subdomain/$protocol" html-comments.log && python3 ../FindComments/find_comments.py -s -e $dir_name/websites/$subdomain/$protocol >> $dir_name/html-comments-u.log &
         for file in ${files[@]};do
             timeout 20 wget -P "$dir_name/websites/$subdomain/$protocol" -q -e robots=off -r --no-host-directories --user-agent="$user_agent_string" http://$subdomain.$2/$file &
         done
